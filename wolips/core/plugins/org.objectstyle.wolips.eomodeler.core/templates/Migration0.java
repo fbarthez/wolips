@@ -10,7 +10,7 @@ import er.extensions.migration.ERXModelVersion;
 public class ${model.name}0 extends ERXMigrationDatabase.Migration {
 	@Override
 	public NSArray<ERXModelVersion> modelDependencies() {
-		return null;
+        return super.modelDependencies();
 	}
   
 	@Override
