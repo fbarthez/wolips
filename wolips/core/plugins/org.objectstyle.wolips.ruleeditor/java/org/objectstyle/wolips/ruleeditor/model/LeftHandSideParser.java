@@ -137,7 +137,7 @@ public class LeftHandSideParser {
 
 	private static final String INTERNAL_QUALIFIER_PREFIX = "$INTERNAL_QUALIFIER_";
 
-	private static final String OPERATORS_PATTERN = "(=|!=|>|<|>=|<=|like){1}";
+	private static final String OPERATORS_PATTERN = "(=|!=|>|<|>=|<=|like|caseInsensitiveLike){1}";
 
 	private static final Map<String, String> UNMODIFIABLE_NULL_VALUE_MAP;
 
