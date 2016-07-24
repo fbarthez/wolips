@@ -27,7 +27,9 @@ public class RulesFilter extends ViewerFilter {
 
 		RightHandSide rhs = rule.getRightHandSide();
 
-		if (rhs != null && (rhs.getKeyPath().contains(regex) || rhs.getValue().contains(regex))) {
+		if (rhs.getKeyPath() != null && rhs.getKeyPath().contains(regex)) {
+			return true;
+		} else if (rhs.getValue() != null && rhs.getValue().contains(regex)) {
 			return true;
 		}
 
