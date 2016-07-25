@@ -147,7 +147,17 @@ public class LeftHandSide extends AbstractQualifierElement {
 
 			buffer.append(selector.getOperator());
 			buffer.append(" ");
-			buffer.append(getValue());
+
+			// and another ugly hack to handle EOKeyComparisonQualifier
+			// has to be done here since LhsValue knows nothing about the qualifier
+			if (EO_KEY_COMPARISON_QUALIFIER.equals(getAssignmentClassName())) {
+				String value = getValue().toString();
+				// strip quotes from the value to preserve the key path identity
+				value = value.replace("'", "");
+				buffer.append(value);
+			} else {
+				buffer.append(getValue());
+			}
 		}
 
 		return buffer.toString();

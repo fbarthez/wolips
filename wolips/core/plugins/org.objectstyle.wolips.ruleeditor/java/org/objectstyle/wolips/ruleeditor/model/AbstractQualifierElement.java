@@ -65,7 +65,10 @@ import java.util.Map;
  */
 public abstract class AbstractQualifierElement extends AbstractRuleElement {
 
+
 	protected static final String KEY_KEY = "key";
+
+	protected static final String LEFT_KEY = "leftKey";
 
 	protected static final String QUALIFIERS_KEY = "qualifiers";
 
@@ -73,7 +76,11 @@ public abstract class AbstractQualifierElement extends AbstractRuleElement {
 
 	protected static final String VALUE_KEY = "value";
 
+	protected static final String RIGHT_KEY = "rightKey";
+
 	protected static final String QUALIFIER_KEY = "qualifier";
+
+	protected static final String EO_KEY_COMPARISON_QUALIFIER = "com.webobjects.eocontrol.EOKeyComparisonQualifier";
 
 	private String key;
 
@@ -88,10 +95,22 @@ public abstract class AbstractQualifierElement extends AbstractRuleElement {
 	public AbstractQualifierElement(final Map<String, Object> properties) {
 		super(properties);
 
-		key = (String) properties.get(KEY_KEY);
+		String keyKey = KEY_KEY;
+		String valueKey = VALUE_KEY;
+
+		// handle special case of EOKeyComparisonQualifier
+		if (EO_KEY_COMPARISON_QUALIFIER.equals(properties.get(CLASS_KEY)) && properties.containsKey(LEFT_KEY)) {
+			// properties come from a plist
+			// => the key's key is leftKey!
+			keyKey = LEFT_KEY;
+			// => the value's key is rightKey!
+			valueKey = RIGHT_KEY;
+		} 
+		key = (String) properties.get(keyKey);
+		
 		selectorName = (String) properties.get(SELECTOR_NAME_KEY);
 
-		Object value = properties.get(VALUE_KEY);
+		Object value = properties.get(valueKey);
 
 		if (value != null) {
 			this.value = new LhsValue(value);
@@ -210,15 +229,23 @@ public abstract class AbstractQualifierElement extends AbstractRuleElement {
 		qualifierMap.put(CLASS_KEY, getAssignmentClassName());
 
 		if (key != null) {
-			qualifierMap.put(KEY_KEY, key);
+			if (EO_KEY_COMPARISON_QUALIFIER.equals(getAssignmentClassName())) {
+				qualifierMap.put(LEFT_KEY, key);
+			} else {
+				qualifierMap.put(KEY_KEY, key);
+			}
 		}
 
 		if (selectorName != null) {
 			qualifierMap.put(SELECTOR_NAME_KEY, selectorName);
 		}
 
-		if (value != null) {
-			qualifierMap.put(VALUE_KEY, value.toMap());
+		if (key != null) {
+			if (EO_KEY_COMPARISON_QUALIFIER.equals(getAssignmentClassName())) {
+				qualifierMap.put(RIGHT_KEY, value.toMap());
+			} else if (value != null) {
+				qualifierMap.put(VALUE_KEY, value.toMap());
+			}
 		}
 
 		if (qualifier != null) {

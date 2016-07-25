@@ -8,7 +8,7 @@ import java.util.Map;
  * @author <a href="mailto:hprange@moleque.com.br">Henrique Prange</a>
  */
 public enum Qualifier {
-	AND("and", "com.webobjects.eocontrol.EOAndQualifier"), KEY_VALUE("", "com.webobjects.eocontrol.EOKeyValueQualifier"), NOT("not", "com.webobjects.eocontrol.EONotQualifier"), OR("or", "com.webobjects.eocontrol.EOOrQualifier");
+	AND("and", "com.webobjects.eocontrol.EOAndQualifier"), KEY_VALUE("", "com.webobjects.eocontrol.EOKeyValueQualifier"), KEY_COMPARISON("kc", "com.webobjects.eocontrol.EOKeyComparisonQualifier"), NOT("not", "com.webobjects.eocontrol.EONotQualifier"), OR("or", "com.webobjects.eocontrol.EOOrQualifier");
 
 	private static final Map<String, Qualifier> QUALIFIERS_BY_CLASS_NAME;
 
@@ -19,6 +19,7 @@ public enum Qualifier {
 
 		tempMap.put(AND.getClassName(), AND);
 		tempMap.put(KEY_VALUE.getClassName(), KEY_VALUE);
+		tempMap.put(KEY_COMPARISON.getClassName(), Qualifier.KEY_COMPARISON);
 		tempMap.put(NOT.getClassName(), NOT);
 		tempMap.put(OR.getClassName(), OR);
 
@@ -28,6 +29,7 @@ public enum Qualifier {
 
 		tempMap.put(AND.getDisplayName(), AND);
 		tempMap.put(KEY_VALUE.getDisplayName(), KEY_VALUE);
+		tempMap.put(KEY_COMPARISON.getDisplayName(), KEY_COMPARISON);
 		tempMap.put(NOT.getDisplayName(), NOT);
 		tempMap.put(OR.getDisplayName(), OR);
 

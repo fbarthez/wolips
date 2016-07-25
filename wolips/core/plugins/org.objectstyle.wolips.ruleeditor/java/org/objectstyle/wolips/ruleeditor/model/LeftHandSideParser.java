@@ -60,6 +60,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * @author <a href="mailto:georg@moleque.com.br">Georg von Bülow</a>
@@ -181,11 +182,20 @@ public class LeftHandSideParser {
 		String operator = tokenizer.next();
 
 		tokenizer.hasNext();
-		String value = tokenizer.next().replaceAll("(\'|\"|\\))", "").trim();
+		String value = tokenizer.next();
 
 		Map<String, Object> properties = new HashMap<String, Object>();
 
-		properties.put(AbstractRuleElement.CLASS_KEY, Qualifier.KEY_VALUE.getClassName());
+		if (value.contains(INTERNAL_QUALIFIER_PREFIX) || value.contains("'") || value.contains("\"") || NumberUtils.isNumber(StringUtils.strip(value))) {
+			properties.put(AbstractRuleElement.CLASS_KEY, Qualifier.KEY_VALUE.getClassName());
+		} else {
+			// the value is unquoted and not a number, so we believe this is a key comparison qualifier
+			properties.put(AbstractRuleElement.CLASS_KEY, Qualifier.KEY_COMPARISON.getClassName());
+		}
+		
+		// remove quotes and closing parenthesis
+		value = value.replaceAll("(\'|\"|\\))", "").trim();
+
 		properties.put(AbstractQualifierElement.KEY_KEY, key);
 		properties.put(AbstractQualifierElement.SELECTOR_NAME_KEY, Selector.forOperator(operator).getSelectorName());
 		properties.put(AbstractQualifierElement.VALUE_KEY, valueRepresentation(value));
