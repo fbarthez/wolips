@@ -54,6 +54,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author uli
  * @author <a href="mailto:hprange@moleque.com.br">Henrique Prange</a>
@@ -70,11 +72,15 @@ public class Rule extends AbstractRuleElement {
 
 	protected static final String RHS_KEY = "rhs";
 
+	protected static final String DOCUMENTATION = "documentation";
+
 	private String author;
 
 	private final LeftHandSide leftHandSide;
 
 	private final RightHandSide rightHandSide;
+
+	private String documentation;
 
 	protected Rule() {
 		super(Collections.EMPTY_MAP);
@@ -107,6 +113,10 @@ public class Rule extends AbstractRuleElement {
 		properties.remove(RHS_KEY);
 
 		setAuthor(properties.get(AUTHOR_KEY).toString());
+		
+		if (properties.get(DOCUMENTATION) != null) {
+			setDocumentation(properties.get(DOCUMENTATION).toString());
+		}
 	}
 
 	/**
@@ -128,6 +138,7 @@ public class Rule extends AbstractRuleElement {
 
 		setAssignmentClassName(rule.getAssignmentClassName());
 		setAuthor(rule.getAuthor());
+		setDocumentation(rule.getDocumentation());
 	}
 
 	@Override
@@ -149,6 +160,10 @@ public class Rule extends AbstractRuleElement {
 	public RightHandSide getRightHandSide() {
 		return rightHandSide;
 	}
+	
+	public String getDocumentation() {
+		return documentation;
+	}
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -166,6 +181,14 @@ public class Rule extends AbstractRuleElement {
 		firePropertyChange(AUTHOR_KEY, oldValue, this.author);
 	}
 
+	public void setDocumentation(final String documentation) {
+		String oldValue = this.documentation;
+
+		this.documentation = documentation;
+
+		firePropertyChange(DOCUMENTATION, oldValue, this.documentation);
+	}
+
 	@Override
 	public Map<String, Object> toMap() {
 		Map<String, Object> ruleMap = new HashMap<String, Object>();
@@ -181,6 +204,9 @@ public class Rule extends AbstractRuleElement {
 
 		ruleMap.put(Rule.RHS_KEY, rhsMap);
 
+		if (StringUtils.isNotBlank(getDocumentation())) {
+			ruleMap.put(Rule.DOCUMENTATION, getDocumentation());
+		}
 		return ruleMap;
 	}
 }

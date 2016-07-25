@@ -247,6 +247,7 @@ public class D2WModel implements PropertyChangeListener {
 	 */
 	public void saveChanges() {
 		Map<String, Collection<Map>> modelMap = rulesToModelMap();
+		// TODO: retrieve from preference
 		boolean isSingleLinePerRule = true;
 		try {
 		
@@ -288,10 +289,6 @@ public class D2WModel implements PropertyChangeListener {
 						}
 
 						out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(modelFile), Charset.forName("UTF-8")));
-						/*
-						 * if (header != null && header.length() > 0) { out.append("// " +
-						 * header); out.append("\n"); }
-						 */
 						out.append(content);
 				} finally {
 					if (out != null) {
