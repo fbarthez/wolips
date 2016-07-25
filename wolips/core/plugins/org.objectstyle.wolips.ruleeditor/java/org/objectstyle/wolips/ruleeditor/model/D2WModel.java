@@ -52,12 +52,19 @@ package org.objectstyle.wolips.ruleeditor.model;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.objectstyle.woenvironment.plist.SimpleParserDataStructureFactory;
 import org.objectstyle.woenvironment.plist.WOLPropertyListSerialization;
 
 /**
@@ -240,10 +247,62 @@ public class D2WModel implements PropertyChangeListener {
 	 */
 	public void saveChanges() {
 		Map<String, Collection<Map>> modelMap = rulesToModelMap();
-
+		boolean isSingleLinePerRule = true;
 		try {
-			WOLPropertyListSerialization.propertyListToFile("", modelFile, modelMap);
+		
+			if (isSingleLinePerRule) {
+				// FP: this is a very ugly way to get the desired single line 
+				// rule file format – I'm not proud of it, but making 
+				// WOLPropertyListSerialization learn new tricks seems
+				// just too daunting
+				StringBuilder content = new StringBuilder("{\n  \"rules\" = (\n");
+				for (Iterator i = rules.iterator(); i.hasNext();) {
+					Rule aRule = (Rule) i.next();
+					content.append("    ");
+					String aSerialisedRule = WOLPropertyListSerialization.stringFromPropertyList(aRule.toMap());
+					aSerialisedRule = StringUtils.replace(aSerialisedRule, "\n", "");
+					aSerialisedRule = aSerialisedRule.replaceAll(" +", " ");
+					aSerialisedRule = aSerialisedRule.replaceAll("\\{ \"", "\\{\"");
+					aSerialisedRule = aSerialisedRule.replaceAll("\\( \\{", "\\(\\{");
+					aSerialisedRule = aSerialisedRule.replaceAll("\\} \\)", "\\}\\)");
+					aSerialisedRule = aSerialisedRule.replaceAll("\\( ", "\\(");
+					aSerialisedRule = aSerialisedRule.replaceAll(" \\)", "\\)");
+					if (i.hasNext()) {
+						aSerialisedRule = aSerialisedRule.concat(", ");
+					} 
+					aSerialisedRule = aSerialisedRule.concat("\n");
+					content.append(aSerialisedRule);
+				}
+				content.append("  ); \n}");
+				
+				BufferedWriter out = null;
+				try {
+						try {
+							Object existingPlistContent = WOLPropertyListSerialization.propertyListFromFile(modelFile);
+							Object newPlistContent = WOLPropertyListSerialization.propertyListFromString(content.toString(), new SimpleParserDataStructureFactory());
+							if (existingPlistContent.equals(newPlistContent)) {
+								return;
+							}
+						} catch (Exception e) {
+							// in this case, just proceed to write it out
+						}
 
+						out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(modelFile), Charset.forName("UTF-8")));
+						/*
+						 * if (header != null && header.length() > 0) { out.append("// " +
+						 * header); out.append("\n"); }
+						 */
+						out.append(content);
+				} finally {
+					if (out != null) {
+						out.close();
+					}
+				}
+
+				
+			} else {
+				WOLPropertyListSerialization.propertyListToFile("", modelFile, modelMap);
+			}
 			setHasUnsavedChanges(false);
 
 		} catch (Exception exception) {
