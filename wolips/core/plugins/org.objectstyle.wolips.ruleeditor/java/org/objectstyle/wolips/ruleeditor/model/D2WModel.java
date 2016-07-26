@@ -54,7 +54,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -295,8 +297,9 @@ public class D2WModel implements PropertyChangeListener {
 						out.close();
 					}
 				}
-
 				
+				// write .txt file for human consumption
+				writeTxtFile();
 			} else {
 				WOLPropertyListSerialization.propertyListToFile("", modelFile, modelMap);
 			}
@@ -304,6 +307,53 @@ public class D2WModel implements PropertyChangeListener {
 
 		} catch (Exception exception) {
 			exception.printStackTrace();
+		}
+	}
+
+	/**
+	 * Saves the rules in human readable form to a file with a .txt suffix. 
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void writeTxtFile() throws FileNotFoundException, IOException {
+		StringBuilder txtContent = new StringBuilder("(\n");
+		for (Iterator i = rules.iterator(); i.hasNext();) {
+			Rule aRule = (Rule) i.next();
+			txtContent.append("    ");
+			txtContent.append(aRule.getAuthor());
+			txtContent.append(" : ");
+			txtContent.append(aRule.getLeftHandSide().toString());
+			txtContent.append(" => ");
+			txtContent.append(aRule.getRightHandSide().getKeyPath());
+			txtContent.append(" = "); 
+			String rhsValue = aRule.getRightHandSide().getValue();
+			if (rhsValue == null) {
+				rhsValue = "(null)";
+			} else if (StringUtils.isNotBlank(rhsValue)) {
+				rhsValue = rhsValue.replaceAll("\\{ \"", "\\{\"");
+				rhsValue = rhsValue.replaceAll("\\( ", "\\(");
+				rhsValue = rhsValue.replaceAll(" \\)", "\\)");
+			}
+			txtContent.append(rhsValue);
+			txtContent.append(" [");
+			txtContent.append(aRule.getRightHandSide().getAssignmentClassName());
+			txtContent.append("]");
+			if (i.hasNext()) {
+				txtContent.append(",\n");
+			} 
+		}
+		txtContent.append("\n)");
+
+		BufferedWriter txtOut = null;
+		try {
+			File txtFile = new File(modelFile.getAbsolutePath() + ".txt");
+			txtOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txtFile), Charset.forName("UTF-8")));
+			txtOut.append(txtContent);
+		} finally {
+			if (txtOut != null) {
+				txtOut.close();
+			}
 		}
 	}
 
