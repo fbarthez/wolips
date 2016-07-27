@@ -47,11 +47,15 @@ public class WOLPropertyListSerialization {
 		}
 
 		public static String stringFromPropertyList(Object plist) throws PropertyListParserException {
+		    return stringFromPropertyList(plist, false);
+		}
+
+		public static String stringFromPropertyList(Object plist, boolean shouldQuote) throws PropertyListParserException {
 			if (plist == null) {
 				return null;
 			}
 			StringBuffer buffer = new StringBuffer(128);
-			_appendObjectToStringBuffer(plist, buffer, 0);
+			_appendObjectToStringBuffer(plist, buffer, 0, shouldQuote);
 			return buffer.toString();
 		}
 
@@ -83,24 +87,24 @@ public class WOLPropertyListSerialization {
 			return objects[0];
 		}
 
-		private static void _appendObjectToStringBuffer(Object object, StringBuffer buffer, int indentionLevel) throws PropertyListParserException {
+		private static void _appendObjectToStringBuffer(Object object, StringBuffer buffer, int indentionLevel, boolean shouldQuote) throws PropertyListParserException {
 			if (object instanceof String) {
-				_appendStringToStringBuffer((String) object, buffer, indentionLevel);
+				_appendStringToStringBuffer((String) object, buffer, indentionLevel, shouldQuote);
 			} else if (object instanceof StringBuffer) {
-				_appendStringToStringBuffer(((StringBuffer) object).toString(), buffer, indentionLevel);
+				_appendStringToStringBuffer(((StringBuffer) object).toString(), buffer, indentionLevel, shouldQuote);
 			} else if (object instanceof EMMutableData) {
 				_appendDataToStringBuffer((EMMutableData) object, buffer, indentionLevel);
 			} else if (object instanceof List) {
-				_appendCollectionToStringBuffer((List) object, buffer, indentionLevel);
+				_appendCollectionToStringBuffer((List) object, buffer, indentionLevel, shouldQuote);
 			} else if (object instanceof Set) {
-				_appendCollectionToStringBuffer((Set) object, buffer, indentionLevel);
+				_appendCollectionToStringBuffer((Set) object, buffer, indentionLevel, shouldQuote);
 			} else if (object instanceof Map) {
-				_appendDictionaryToStringBuffer((Map) object, buffer, indentionLevel);
+				_appendDictionaryToStringBuffer((Map) object, buffer, indentionLevel, shouldQuote);
 			} else if (object instanceof Boolean) {
 				String value = ((Boolean) object).booleanValue() ? "true" : "false";
-				_appendStringToStringBuffer(value, buffer, indentionLevel);
+				_appendStringToStringBuffer(value, buffer, indentionLevel, shouldQuote);
 			} else {
-				_appendStringToStringBuffer(object.toString(), buffer, indentionLevel);
+				_appendStringToStringBuffer(object.toString(), buffer, indentionLevel, shouldQuote);
 			}
 		}
 
@@ -188,9 +192,7 @@ public class WOLPropertyListSerialization {
 		 *       c == '/'
 		 * </pre>
 		 */
-		private static void _appendStringToStringBuffer(String string, StringBuffer buffer, int indentionLevel) {
-			boolean shouldQuote = false;
-
+		private static void _appendStringToStringBuffer(String string, StringBuffer buffer, int indentionLevel, boolean shouldQuote) {
 			// scan string for special chars,
 			// if we have them, string must be quoted
 
@@ -235,7 +237,7 @@ public class WOLPropertyListSerialization {
 			buffer.append('>');
 		}
 
-		private static void _appendCollectionToStringBuffer(Collection collection, StringBuffer buffer, int indentionLevel) throws PropertyListParserException {
+		private static void _appendCollectionToStringBuffer(Collection collection, StringBuffer buffer, int indentionLevel, boolean shouldQuote) throws PropertyListParserException {
 			buffer.append('(');
 			if (!collection.isEmpty()) {
 				int originalLength = buffer.length();
@@ -250,7 +252,7 @@ public class WOLPropertyListSerialization {
 						buffer.append('\n');
 						_appendIndentationToStringBuffer(buffer, indentionLevel + 1);
 						int itemStart = buffer.length();
-						_appendObjectToStringBuffer(obj, buffer, indentionLevel + 1);
+						_appendObjectToStringBuffer(obj, buffer, indentionLevel + 1, shouldQuote);
 						int itemEnd = buffer.length();
 
 						if (oneLineBuffer != null && (oneLineBuffer.length() + (itemEnd - itemStart) < 79)) {
@@ -276,7 +278,7 @@ public class WOLPropertyListSerialization {
 			buffer.append(')');
 		}
 
-		private static void _appendDictionaryToStringBuffer(Map dictionary, StringBuffer buffer, int indentionLevel) throws PropertyListParserException {
+		private static void _appendDictionaryToStringBuffer(Map dictionary, StringBuffer buffer, int indentionLevel, boolean shouldQuote) throws PropertyListParserException {
 			buffer.append('{');
 			if (!dictionary.isEmpty()) {
 				int originalLength = buffer.length();
@@ -303,11 +305,11 @@ public class WOLPropertyListSerialization {
 						buffer.append('\n');
 						_appendIndentationToStringBuffer(buffer, indentionLevel + 1);
 						int keyStart = buffer.length();
-						_appendStringToStringBuffer((String) key, buffer, indentionLevel + 1);
+						_appendStringToStringBuffer((String) key, buffer, indentionLevel + 1, shouldQuote);
 						int keyEnd = buffer.length();
 						buffer.append(" = ");
 						int valueStart = buffer.length();
-						_appendObjectToStringBuffer(value, buffer, indentionLevel + 1);
+						_appendObjectToStringBuffer(value, buffer, indentionLevel + 1, shouldQuote);
 						int valueEnd = buffer.length();
 						buffer.append("; ");
 
@@ -703,6 +705,10 @@ public class WOLPropertyListSerialization {
 
 	public static String stringFromPropertyList(Object plist) throws PropertyListParserException {
 		return _Utilities.stringFromPropertyList(plist);
+	}
+
+	public static String stringFromPropertyList(Object plist, boolean shouldQuote) throws PropertyListParserException {
+		return _Utilities.stringFromPropertyList(plist, shouldQuote);
 	}
 
 	public static Object propertyListFromString(String string) throws IOException, PropertyListParserException {

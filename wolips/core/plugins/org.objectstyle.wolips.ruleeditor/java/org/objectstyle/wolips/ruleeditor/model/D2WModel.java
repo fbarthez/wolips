@@ -262,7 +262,7 @@ public class D2WModel implements PropertyChangeListener {
 				for (Iterator i = rules.iterator(); i.hasNext();) {
 					Rule aRule = (Rule) i.next();
 					content.append("    ");
-					String aSerialisedRule = WOLPropertyListSerialization.stringFromPropertyList(aRule.toMap());
+					String aSerialisedRule = WOLPropertyListSerialization.stringFromPropertyList(aRule.toMap(), true);
 					aSerialisedRule = StringUtils.replace(aSerialisedRule, "\n", "");
 					aSerialisedRule = aSerialisedRule.replaceAll(" +", " ");
 					aSerialisedRule = aSerialisedRule.replaceAll("\\{ \"", "\\{\"");
