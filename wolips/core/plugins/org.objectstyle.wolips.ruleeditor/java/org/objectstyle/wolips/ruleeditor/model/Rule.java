@@ -96,6 +96,8 @@ public class Rule extends AbstractRuleElement {
 	protected Rule(final Map properties) {
 		super(properties);
 
+		setAssignmentClassName(DEFAULT_ASSIGNMENT_CLASS_NAME);
+
 		Map<String, Object> lhsProperties = (Map<String, Object>) properties.get(LHS_KEY);
 
 		if (lhsProperties == null) {

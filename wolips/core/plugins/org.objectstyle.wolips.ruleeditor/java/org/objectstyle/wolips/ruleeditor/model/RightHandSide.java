@@ -54,9 +54,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.objectstyle.woenvironment.plist.PropertyListParserException;
+import org.objectstyle.woenvironment.plist.SimpleParserDataStructureFactory;
+import org.objectstyle.woenvironment.plist.WOLPropertyListSerialization;
 
 /**
  * @author uli
@@ -84,7 +86,7 @@ public class RightHandSide extends AbstractRuleElement {
 		setKeyPath("");
 	}
 
-	protected RightHandSide(final Map properties) {
+	protected RightHandSide(final Map<String, Object> properties) {
 		super(properties);
 
 		value = properties.get(VALUE_KEY);
@@ -99,49 +101,18 @@ public class RightHandSide extends AbstractRuleElement {
 		return valueForObject(value);
 	}
 
-	private Object parseValueString(String value) {
-		value = StringUtils.remove(value, "\"");
-
-		// When its an Array
-		if (value.startsWith("(")) {
-			value = StringUtils.substring(value, 1, value.length() - 1);
-
-			String[] arrayComponents = Pattern.compile(",").split(value);
-
-			ArrayList<Object> array = new ArrayList<Object>();
-
-			for (String expression : arrayComponents) {
-				expression = expression.trim();
-
-				if ("".equals(expression)) {
-					continue;
-				}
-
-				array.add(parseValueString(expression));
-			}
-
-			return array;
+	private Object parseValueString(final String aValue) throws IllegalArgumentException {
+		if (aValue.startsWith("(") || aValue.startsWith("{")) {
+			try {
+				Object objectFromString = WOLPropertyListSerialization.propertyListFromString(aValue, new SimpleParserDataStructureFactory());
+				return objectFromString;
+			} catch (PropertyListParserException e) {
+				throw new IllegalArgumentException("Failed to parse value string: ", e);
+			} 
 		}
-		// When its a Dictionary
-		else if (value.startsWith("{")) {
-			Map<String, Object> dictionary = new HashMap<String, Object>();
-
-			value = StringUtils.substring(value, 1, value.lastIndexOf(";"));
-
-			String[] dictionaryComponents = Pattern.compile(";").split(value);
-
-			for (String expression : dictionaryComponents) {
-				String key = expression.substring(0, expression.indexOf("=")).trim();
-
-				Object dictionaryValue = parseValueString(expression.substring(expression.indexOf("=") + 1, expression.length()).trim());
-
-				dictionary.put(key, dictionaryValue);
-			}
-			return dictionary;
-		}
-
+		
 		// So its a String
-		return value;
+		return StringUtils.remove(aValue, "\"");
 	}
 
 	public void setKeyPath(final String keyPath) {
@@ -176,6 +147,15 @@ public class RightHandSide extends AbstractRuleElement {
 			return null;
 		}
 
+//		if (object instanceof Collection || object instanceof Map) {
+//			String result;
+//			try {
+//				result = WOLPropertyListSerialization.stringFromPropertyList(object);
+//				return result;
+//			} catch (PropertyListParserException e) {
+//				e.printStackTrace();
+//			}
+//		}
 		if (object instanceof Collection) {
 			Collection<Object> arrayOfValues = (Collection<Object>) object;
 
@@ -187,8 +167,8 @@ public class RightHandSide extends AbstractRuleElement {
 
 			buffer.append("( ");
 
-			for (Object value : arrayOfValues) {
-				buffer.append(valueForObject(value));
+			for (Object aValue : arrayOfValues) {
+				buffer.append(valueForObject(aValue));
 				buffer.append(", ");
 			}
 
