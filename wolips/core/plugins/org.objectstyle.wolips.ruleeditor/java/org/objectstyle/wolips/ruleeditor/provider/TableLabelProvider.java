@@ -21,6 +21,9 @@ public class TableLabelProvider implements ITableLabelProvider {
 
 		switch (columnIndex) {
 		case 0:
+			
+			return ((Rule) element).getAuthor();
+		case 1:
 
 			if (((Rule) element).getLeftHandSide() == null) {
 				return "*true*";
@@ -28,15 +31,12 @@ public class TableLabelProvider implements ITableLabelProvider {
 
 			return ((Rule) element).getLeftHandSide().toString();
 
-		case 1:
-
-			return ((Rule) element).getRightHandSide().getKeyPath();
 		case 2:
 
-			return ((Rule) element).getRightHandSide().getValue();
+			return ((Rule) element).getRightHandSide().getKeyPath();
 		case 3:
 
-			return ((Rule) element).getAuthor();
+			return ((Rule) element).getRightHandSide().getValue();
 
 		default:
 			break;
