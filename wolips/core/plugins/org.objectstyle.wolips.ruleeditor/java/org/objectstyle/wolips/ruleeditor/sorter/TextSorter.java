@@ -29,6 +29,11 @@ public class TextSorter extends AbstractInvertableTableSorter {
 				return 0;
 			}
 			return ((Rule) e1).getRightHandSide().getValue().compareTo(((Rule) e2).getRightHandSide().getValue());
+		} else if (columnIdx == 3) {
+			if (((Rule) e1).getRightHandSide().getAssignmentClassName() == null || ((Rule) e2).getRightHandSide().getAssignmentClassName() == null) {
+				return 0;
+			}
+			return ((Rule) e1).getRightHandSide().getAssignmentClassName().compareTo(((Rule) e2).getRightHandSide().getAssignmentClassName());
 		} else {
 			if (((Rule) e1).getAuthor() == null || ((Rule) e2).getAuthor() == null) {
 				return 0;

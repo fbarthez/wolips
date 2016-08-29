@@ -311,10 +311,11 @@ public class RuleEditor {
 		 */
 
 		// Create the columns
-		RuleEditor.createTableColumn(tableViewer, "Priority", "Priority", new TextSorter(3), SWT.UP, false).chooseColumnForSorting();
+		RuleEditor.createTableColumn(tableViewer, "Priority", "Priority", new TextSorter(4), SWT.UP, false).chooseColumnForSorting();
 		RuleEditor.createTableColumn(tableViewer, "Lhs", "Left Hand Side", new TextSorter(0), SWT.DOWN, true);
 		RuleEditor.createTableColumn(tableViewer, "Rhs Key", "Right Hand Side Key", new TextSorter(1), SWT.UP, false);
 		RuleEditor.createTableColumn(tableViewer, "Rhs Value", "Right Hand Side Value", new TextSorter(2), SWT.UP, false);
+		RuleEditor.createTableColumn(tableViewer, "Class", "Assignment Class", new TextSorter(3), SWT.UP, false);
 
 		// TableColumn c1 = new TableColumn(table, SWT.LEFT, 0);
 		// c1.setText("Lhs");
@@ -337,14 +338,16 @@ public class RuleEditor {
 				}
 
 				int tblWidth = table.getBounds().width;
-				int t0w = (int) (tblWidth * 0.4);
-				int t1w = (int) (tblWidth * 0.2);
-				int t2w = (int) (tblWidth * 0.3);
-				int t3w = tblWidth - (t0w + t1w + t2w + 40);
+				int t0w = (int) (tblWidth * 0.3);
+				int t1w = (int) (tblWidth * 0.15);
+				int t2w = (int) (tblWidth * 0.225);
+				int t4w = (int) (tblWidth * 0.225);
+				int t3w = tblWidth - (t0w + t1w + t2w + t4w + 40);
 				table.getColumn(0).setWidth(t3w);
 				table.getColumn(1).setWidth(t0w);
 				table.getColumn(2).setWidth(t1w);
 				table.getColumn(3).setWidth(t2w);
+				table.getColumn(4).setWidth(t4w);
 			}
 		});
 

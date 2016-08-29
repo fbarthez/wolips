@@ -38,6 +38,10 @@ public class TableLabelProvider implements ITableLabelProvider {
 
 			return ((Rule) element).getRightHandSide().getValue();
 
+		case 4:
+
+			return ((Rule) element).getRightHandSide().getAssignmentClassName();
+
 		default:
 			break;
 		}
