@@ -68,6 +68,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.objectstyle.woenvironment.plist.SimpleParserDataStructureFactory;
 import org.objectstyle.woenvironment.plist.WOLPropertyListSerialization;
+import org.objectstyle.wolips.preferences.Preferences;
 
 /**
  * This class is the base class to work with d2wmodel files.
@@ -249,11 +250,8 @@ public class D2WModel implements PropertyChangeListener {
 	 */
 	public void saveChanges() {
 		Map<String, Collection<Map>> modelMap = rulesToModelMap();
-		// TODO: retrieve from preference
-		boolean isSingleLinePerRule = true;
 		try {
-		
-			if (isSingleLinePerRule) {
+			if (Preferences.shouldRuleeditorSaveInSingleLines()) {
 				// FP: this is a very ugly way to get the desired single line 
 				// rule file format – I'm not proud of it, but making 
 				// WOLPropertyListSerialization learn new tricks seems
@@ -298,8 +296,10 @@ public class D2WModel implements PropertyChangeListener {
 					}
 				}
 				
-				// write .txt file for human consumption
-				writeTxtFile();
+				if (Preferences.shouldRuleeditorSaveTxtFile()) {
+					// write .txt file for human consumption
+					writeTxtFile();
+				}
 			} else {
 				WOLPropertyListSerialization.propertyListToFile("", modelFile, modelMap);
 			}

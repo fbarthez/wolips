@@ -336,6 +336,12 @@
             class="org.objectstyle.wolips.ui.preferences.EOGeneratorPreferencesPage"
             id="org.objectstyle.wolips.preferences.EOGeneratorPreferencesPage">
       </page>
+      <page
+            name="RuleEditor"
+            category="org.objectstyle.wolips.preferences.PreferencesPage"
+            class="org.objectstyle.wolips.ui.preferences.RuleEditorPreferencesPage"
+            id="org.objectstyle.wolips.preferences.RuleEditorPreferencesPage">
+      </page>      
    </extension>
 <!-- =================================================================================== -->
 <!-- Extension: Decorators                                                               -->

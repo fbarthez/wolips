@@ -133,6 +133,13 @@ public class Preferences {
 	public static final String PREF_SHOW_CONSOLE_EXCEPTION_DIALOGS = "org.objectstyle.wolips.Preference.ConsoleExceptionDialogs";
 	
 	public static final String PREF_WOLIPS_PROPERTIES_FILE = "org.objectstyle.wolips.wolipsPropertiesFile";
+	
+	public static final String PREF_RULEEDITOR_SAVE_SINGLE_LINES = "org.objectstyle.wolips.Preference.RuleEditorSaveSingleLines";
+	
+	public static final String PREF_RULEEDITOR_SAVE_TXT_FILE = "org.objectstyle.wolips.Preference.RuleEditorSaveTxtFile";
+
+	public static final String PREF_RULEEDITOR_ADD_UUID = "org.objectstyle.wolips.Preference.RuleEditorAddUUID";
+
 	/**
 	 * Comment for <code>FLAG_INCLUDE_EXCLUDE_RULES_CHANGED</code>
 	 */
@@ -225,6 +232,15 @@ public class Preferences {
 		}
 		if (Preferences.SET_DEFAULTS_STRING == null || Preferences.SET_DEFAULTS_STRING.equals(Preferences.PREF_SHOW_CONSOLE_EXCEPTION_DIALOGS)) {
 			store.setDefault(Preferences.PREF_SHOW_CONSOLE_EXCEPTION_DIALOGS, PreferencesMessages.getString(Preferences.trueString));
+		}
+		if (Preferences.SET_DEFAULTS_STRING == null || Preferences.SET_DEFAULTS_STRING.equals(Preferences.PREF_RULEEDITOR_SAVE_SINGLE_LINES)) {
+			store.setDefault(Preferences.PREF_RULEEDITOR_SAVE_SINGLE_LINES, PreferencesMessages.getString(Preferences.trueString));
+		}
+		if (Preferences.SET_DEFAULTS_STRING == null || Preferences.SET_DEFAULTS_STRING.equals(Preferences.PREF_RULEEDITOR_SAVE_TXT_FILE)) {
+			store.setDefault(Preferences.PREF_RULEEDITOR_SAVE_TXT_FILE, PreferencesMessages.getString(Preferences.trueString));
+		}
+		if (Preferences.SET_DEFAULTS_STRING == null || Preferences.SET_DEFAULTS_STRING.equals(Preferences.PREF_RULEEDITOR_ADD_UUID)) {
+			store.setDefault(Preferences.PREF_RULEEDITOR_ADD_UUID, PreferencesMessages.getString(Preferences.trueString));
 		}
 		store.setDefault(Preferences.PREF_LAUNCH_GLOBAL, PreferencesMessages.getString(Preferences.PREF_LAUNCH_GLOBAL));
 		Preferences.SET_DEFAULTS_STRING = null;
@@ -439,6 +455,18 @@ public class Preferences {
 		return Preferences.getBoolean(Preferences.PREF_AUTOEOGENERATE_ON_BUILD);
 	}
 
+	public static boolean shouldRuleeditorSaveInSingleLines() {
+		return Preferences.getBoolean(Preferences.PREF_RULEEDITOR_SAVE_SINGLE_LINES);
+	}
+
+	public static boolean shouldRuleeditorSaveTxtFile() {
+		return Preferences.getBoolean(Preferences.PREF_RULEEDITOR_SAVE_TXT_FILE);
+	}
+
+	public static boolean shouldRuleeditorAddUUID() {
+		return Preferences.getBoolean(Preferences.PREF_RULEEDITOR_ADD_UUID);
+	}
+	
 	public static boolean isEOGeneratorJava14() {
 		return Preferences.getBoolean(Preferences.PREF_EOGENERATOR_JAVA_14);
 	}
@@ -527,6 +555,18 @@ public class Preferences {
 		Preferences.setBoolean(Preferences.PREF_SHOW_CONSOLE_EXCEPTION_DIALOGS, value);
 	}
 	
+	public static void setRuleeditorSaveInSingleLines(boolean value) {
+		Preferences.setBoolean(Preferences.PREF_RULEEDITOR_SAVE_SINGLE_LINES, value);
+	}
+
+	public static void setRuleeditorSaveTxtFile(boolean value) {
+		Preferences.setBoolean(Preferences.PREF_RULEEDITOR_SAVE_TXT_FILE, value);
+	}
+
+	public static void setRuleeditorAddUUID(boolean value) {
+		Preferences.setBoolean(Preferences.PREF_RULEEDITOR_ADD_UUID, value);
+	}
+
 	public static boolean isShowConsoleExceptionDialogs() {
 		return Preferences.getBoolean(Preferences.PREF_SHOW_CONSOLE_EXCEPTION_DIALOGS);
 	}
