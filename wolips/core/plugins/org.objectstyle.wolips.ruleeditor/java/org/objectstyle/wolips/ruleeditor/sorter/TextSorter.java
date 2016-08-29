@@ -33,7 +33,7 @@ public class TextSorter extends AbstractInvertableTableSorter {
 			if (((Rule) e1).getAuthor() == null || ((Rule) e2).getAuthor() == null) {
 				return 0;
 			}
-			return ((Rule) e1).getAuthor().compareTo(((Rule) e2).getAuthor());
+			return Integer.valueOf(((Rule) e1).getAuthor()).compareTo(Integer.valueOf(((Rule) e2).getAuthor()));
 		}
 
 	}
