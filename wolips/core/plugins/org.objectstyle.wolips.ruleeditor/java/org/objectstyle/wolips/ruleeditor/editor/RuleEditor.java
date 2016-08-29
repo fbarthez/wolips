@@ -59,6 +59,8 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -356,6 +358,13 @@ public class RuleEditor {
 		lhsgroup.setLayout(new FillLayout());
 		lhsgroup.setLayoutData(lhsdata);
 		lhstext = new Text(lhsgroup, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+		lhstext.addTraverseListener(new TraverseListener() {
+		    public void keyTraversed(TraverseEvent e) {
+		        if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+		            e.doit = true;
+		        }
+		    }
+		});
 		lhstext.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(final FocusEvent event) {
@@ -448,6 +457,13 @@ public class RuleEditor {
 		Label valuelabel = new Label(rhsgroup, SWT.NONE);
 		valuelabel.setText("Value:");
 		valuetext = new Text(rhsgroup, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+		valuetext.addTraverseListener(new TraverseListener() {
+		    public void keyTraversed(TraverseEvent e) {
+		        if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+		            e.doit = true;
+		        }
+		    }
+		});
 		GridData valuedata = new GridData(GridData.FILL_BOTH);
 		valuedata.grabExcessHorizontalSpace = true;
 		valuedata.grabExcessVerticalSpace = true;
