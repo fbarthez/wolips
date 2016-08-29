@@ -61,6 +61,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -90,7 +91,7 @@ public class D2WModel implements PropertyChangeListener {
 
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-	private final Collection<Rule> rules;
+	private final ArrayList<Rule> rules;
 
 	/**
 	 * The D2WModel is created based on a file. An empty file or an existing
@@ -160,6 +161,7 @@ public class D2WModel implements PropertyChangeListener {
 	}
 
 	public Collection<Rule> getRules() {
+		Collections.sort(rules);
 		return rules;
 	}
 
@@ -192,20 +194,20 @@ public class D2WModel implements PropertyChangeListener {
 
 	}
 
-	private Collection<Rule> modelMapToRules(Map<String, Collection<Map>> modelMap) {
+	private ArrayList<Rule> modelMapToRules(Map<String, Collection<Map>> modelMap) {
 		Collection<Map> rulesAsMaps = modelMap.get(RULES_LIST_KEY);
 
-		Collection<Rule> rules = new ArrayList<Rule>(rulesAsMaps.size());
+		ArrayList<Rule> ruleList = new ArrayList<Rule>(rulesAsMaps.size());
 
 		for (Map ruleAsMap : rulesAsMaps) {
 			Rule rule = new Rule(ruleAsMap);
 
 			rule.addPropertyChangeListener(this);
 
-			rules.add(rule);
+			ruleList.add(rule);
 		}
 
-		return rules;
+		return ruleList;
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
@@ -231,9 +233,9 @@ public class D2WModel implements PropertyChangeListener {
 	private Map<String, Collection<Map>> rulesToModelMap() {
 		Map<String, Collection<Map>> modelMap = new HashMap<String, Collection<Map>>(NUMBER_OF_RULES_KEY);
 
-		Collection<Map> rulesArray = new ArrayList<Map>();
+		ArrayList<Map> rulesArray = new ArrayList<Map>();
 
-		for (Rule rule : rules) {
+		for (Rule rule : getRules()) {
 
 			Map<String, Object> ruleMap = rule.toMap();
 
@@ -268,6 +270,9 @@ public class D2WModel implements PropertyChangeListener {
 					aSerialisedRule = aSerialisedRule.replaceAll("\\} \\)", "\\}\\)");
 					aSerialisedRule = aSerialisedRule.replaceAll("\\( ", "\\(");
 					aSerialisedRule = aSerialisedRule.replaceAll(" \\)", "\\)");
+					// and another ugly hack to move the UUID to second place
+					aSerialisedRule = aSerialisedRule.replaceFirst("\"author\" = \"(\\d*)\"; (.*?) \"uuid\" = \"(.*?)\";", 
+							"\"author\" = \"$1\"; \"uuid\" = \"$3\"; $2");
 					if (i.hasNext()) {
 						aSerialisedRule = aSerialisedRule.concat(", ");
 					} 

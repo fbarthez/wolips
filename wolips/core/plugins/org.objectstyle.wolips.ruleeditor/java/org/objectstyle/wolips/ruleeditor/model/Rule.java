@@ -53,16 +53,20 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
+import org.objectstyle.wolips.preferences.Preferences;
 
 /**
  * @author uli
  * @author <a href="mailto:hprange@moleque.com.br">Henrique Prange</a>
  */
-public class Rule extends AbstractRuleElement {
+public class Rule extends AbstractRuleElement implements Comparable<Rule> {
 
 	protected static final String AUTHOR_KEY = "author";
+
+	protected static final String UUID_KEY = "uuid";
 
 	protected static final String DEFAULT_ASSIGNMENT_CLASS_NAME = "com.webobjects.directtoweb.Rule";
 
@@ -75,6 +79,8 @@ public class Rule extends AbstractRuleElement {
 	protected static final String DOCUMENTATION = "documentation";
 
 	private String author;
+	
+	private UUID uuid;
 
 	private final LeftHandSide leftHandSide;
 
@@ -83,10 +89,13 @@ public class Rule extends AbstractRuleElement {
 	private String documentation;
 
 	protected Rule() {
-		super(Collections.EMPTY_MAP);
+		super(Collections.<String, Object> emptyMap());
 
 		setAssignmentClassName(DEFAULT_ASSIGNMENT_CLASS_NAME);
 		setAuthor(DEFAULT_AUTHOR);
+		if (Preferences.shouldRuleeditorAddUUID()) {
+			setUUID(UUID.randomUUID());
+		}
 
 		leftHandSide = new LeftHandSide();
 
@@ -116,6 +125,12 @@ public class Rule extends AbstractRuleElement {
 
 		setAuthor(properties.get(AUTHOR_KEY).toString());
 		
+		if (properties.get(UUID_KEY) != null) {
+			setUUID(UUID.fromString((String) properties.get(UUID_KEY)));
+		} else {
+			setUUID(UUID.randomUUID());
+		}
+		
 		if (properties.get(DOCUMENTATION) != null) {
 			setDocumentation(properties.get(DOCUMENTATION).toString());
 		}
@@ -128,7 +143,7 @@ public class Rule extends AbstractRuleElement {
 	 *            A D2W rule
 	 */
 	protected Rule(Rule rule) {
-		super(Collections.EMPTY_MAP);
+		super(Collections.<String, Object> emptyMap());
 
 		Map lhsMap = rule.getLeftHandSide().toMap();
 
@@ -140,6 +155,11 @@ public class Rule extends AbstractRuleElement {
 
 		setAssignmentClassName(rule.getAssignmentClassName());
 		setAuthor(rule.getAuthor());
+		if (rule.getUUID() != null) {
+			setUUID(rule.getUUID());
+		} else {
+			setUUID(UUID.randomUUID());
+		}
 		setDocumentation(rule.getDocumentation());
 	}
 
@@ -150,11 +170,45 @@ public class Rule extends AbstractRuleElement {
 		leftHandSide.addPropertyChangeListener(listener);
 		rightHandSide.addPropertyChangeListener(listener);
 	}
+	
+	public int compareTo(Rule other) {
+		int c;
+
+        try {
+        	c = Integer.valueOf(getAuthor()).compareTo(Integer.valueOf(other.getAuthor()));
+			if (c != 0)
+				return c;
+        } catch (NumberFormatException e) {
+        	// do nothing, just move on
+        }
+        
+        if (Preferences.shouldRuleeditorAddUUID()) {
+			/*
+			 * we compare the string representation, as the UUID comparison
+			 * refers to the most significant field in which the UUIDs differ,
+			 * the result of which results in a non-intuitive sort order
+			 */
+			// c = getUUID().compareTo(other.getUUID());
+			c = getUUID().toString().compareTo(other.getUUID().toString());
+			if (c != 0)
+				return c;
+        }
+		
+		c = getLeftHandSide().toString().compareTo(other.getLeftHandSide().toString());
+		if (c != 0)
+			return c;
+
+		return getRightHandSide().toString().compareTo(other.getRightHandSide().toString());
+	}
 
 	public String getAuthor() {
 		return author;
 	}
 
+	public UUID getUUID() {
+		return uuid;
+	}
+	
 	public LeftHandSide getLeftHandSide() {
 		return leftHandSide;
 	}
@@ -183,6 +237,10 @@ public class Rule extends AbstractRuleElement {
 		firePropertyChange(AUTHOR_KEY, oldValue, this.author);
 	}
 
+	private void setUUID(UUID uuid) {
+		this.uuid = uuid;
+	}
+
 	public void setDocumentation(final String documentation) {
 		String oldValue = this.documentation;
 
@@ -197,6 +255,9 @@ public class Rule extends AbstractRuleElement {
 
 		ruleMap.put(CLASS_KEY, getAssignmentClassName());
 		ruleMap.put(AUTHOR_KEY, getAuthor());
+		if (Preferences.shouldRuleeditorAddUUID()) {
+			ruleMap.put(UUID_KEY, getUUID());
+		}
 
 		Map<String, Object> lhsMap = leftHandSide.toMap();
 
