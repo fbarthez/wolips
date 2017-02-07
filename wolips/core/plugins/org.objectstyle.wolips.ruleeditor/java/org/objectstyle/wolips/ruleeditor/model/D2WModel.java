@@ -325,25 +325,7 @@ public class D2WModel implements PropertyChangeListener {
 		StringBuilder txtContent = new StringBuilder("(\n");
 		for (Iterator i = rules.iterator(); i.hasNext();) {
 			Rule aRule = (Rule) i.next();
-			txtContent.append("    ");
-			txtContent.append(aRule.getAuthor());
-			txtContent.append(" : ");
-			txtContent.append(aRule.getLeftHandSide().toString());
-			txtContent.append(" => ");
-			txtContent.append(aRule.getRightHandSide().getKeyPath());
-			txtContent.append(" = "); 
-			String rhsValue = aRule.getRightHandSide().getValue();
-			if (rhsValue == null) {
-				rhsValue = "(null)";
-			} else if (StringUtils.isNotBlank(rhsValue)) {
-				rhsValue = rhsValue.replaceAll("\\{ \"", "\\{\"");
-				rhsValue = rhsValue.replaceAll("\\( ", "\\(");
-				rhsValue = rhsValue.replaceAll(" \\)", "\\)");
-			}
-			txtContent.append(rhsValue);
-			txtContent.append(" [");
-			txtContent.append(aRule.getRightHandSide().getAssignmentClassName());
-			txtContent.append("]");
+			txtContent.append(aRule.toString());
 			if (i.hasNext()) {
 				txtContent.append(",\n");
 			} 

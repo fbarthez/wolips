@@ -272,4 +272,30 @@ public class Rule extends AbstractRuleElement implements Comparable<Rule> {
 		}
 		return ruleMap;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder txtContent = new StringBuilder();
+		txtContent.append("    ");
+		txtContent.append(getAuthor());
+		txtContent.append(" : ");
+		txtContent.append(getLeftHandSide().toString());
+		txtContent.append(" => ");
+		txtContent.append(getRightHandSide().getKeyPath());
+		txtContent.append(" = "); 
+		String rhsValue = getRightHandSide().getValue();
+		if (rhsValue == null) {
+			rhsValue = "(null)";
+		} else if (StringUtils.isNotBlank(rhsValue)) {
+			rhsValue = rhsValue.replaceAll("\\{ \"", "\\{\"");
+			rhsValue = rhsValue.replaceAll("\\( ", "\\(");
+			rhsValue = rhsValue.replaceAll(" \\)", "\\)");
+		}
+		txtContent.append(rhsValue);
+		txtContent.append(" [");
+		txtContent.append(getRightHandSide().getAssignmentClassName());
+		txtContent.append("]");
+		return txtContent.toString();
+		
+	}
 }
