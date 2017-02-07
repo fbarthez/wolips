@@ -501,6 +501,10 @@ public class RuleEditor {
 
 		updateRules();
 	}
+	
+	public TableViewer tableViewer() {
+		return tableViewer;
+	}
 
 	public void setFocus() {
 		// DO NOTHING

@@ -49,14 +49,24 @@
  */
 package org.objectstyle.wolips.ruleeditor.editor;
 
-import java.io.*;
+import java.io.File;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.objectstyle.wolips.ruleeditor.listener.*;
-import org.objectstyle.wolips.ruleeditor.model.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.EditorPart;
+import org.objectstyle.wolips.ruleeditor.actions.CopyRuleAction;
+import org.objectstyle.wolips.ruleeditor.actions.CutRuleAction;
+import org.objectstyle.wolips.ruleeditor.actions.PasteTableRuleAction;
+import org.objectstyle.wolips.ruleeditor.listener.D2WModelChangeListener;
+import org.objectstyle.wolips.ruleeditor.model.D2WModel;
 
 /**
  * @author omar
@@ -74,6 +84,8 @@ public class RuleEditorPart extends EditorPart {
 
 	private RuleEditor ruleEditor;
 
+    private Clipboard clipboard;
+
 	public RuleEditorPart() {
 		super();
 	}
@@ -90,6 +102,13 @@ public class RuleEditorPart extends EditorPart {
 
 		ruleEditor.setD2WModel(model);
 		ruleEditor.createContents(parent);
+		
+		// add cut and paste support
+		clipboard = new Clipboard(getSite().getShell().getDisplay());
+		IActionBars bars = getEditorSite().getActionBars();
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, new CutRuleAction(ruleEditor.tableViewer(), clipboard));
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, new CopyRuleAction(ruleEditor.tableViewer(), clipboard));
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, new PasteTableRuleAction(ruleEditor.tableViewer(), clipboard));
 	}
 
 	@Override
