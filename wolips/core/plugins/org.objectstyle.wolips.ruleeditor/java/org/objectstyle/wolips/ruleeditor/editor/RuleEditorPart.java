@@ -64,6 +64,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.objectstyle.wolips.ruleeditor.actions.CopyRuleAction;
 import org.objectstyle.wolips.ruleeditor.actions.CutRuleAction;
+import org.objectstyle.wolips.ruleeditor.actions.DeleteRuleAction;
 import org.objectstyle.wolips.ruleeditor.actions.PasteTableRuleAction;
 import org.objectstyle.wolips.ruleeditor.listener.D2WModelChangeListener;
 import org.objectstyle.wolips.ruleeditor.model.D2WModel;
@@ -109,6 +110,7 @@ public class RuleEditorPart extends EditorPart {
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, new CutRuleAction(ruleEditor.tableViewer(), clipboard));
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, new CopyRuleAction(ruleEditor.tableViewer(), clipboard));
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, new PasteTableRuleAction(ruleEditor.tableViewer(), clipboard));
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, new DeleteRuleAction(ruleEditor.tableViewer()));
 	}
 
 	@Override
