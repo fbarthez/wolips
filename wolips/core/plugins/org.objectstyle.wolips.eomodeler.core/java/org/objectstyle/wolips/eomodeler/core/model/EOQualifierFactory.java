@@ -197,7 +197,8 @@ public class EOQualifierFactory {
 		if (_rawValue instanceof Map) {
 			EOModelMap valueMap = new EOModelMap((Map) _rawValue);
 			String valueClass = valueMap.getString("class", true);
-			if ("EONull".equals(valueClass) || "com.webobjects.eocontrol.EONull".equals(valueClass)) {
+			if ("EONull".equals(valueClass) || "com.webobjects.eocontrol.EONull".equals(valueClass) 
+					|| "com.webobjects.foundation.NSKeyValueCoding$Null".equals(valueClass)) {
 				value = null;
 			} else if ("EOQualifierVariable".equals(valueClass) || "com.webobjects.eocontrol.EOQualifierVariable".equals(valueClass)) {
 				String variableKey = valueMap.getString("_key", true);
@@ -206,7 +207,7 @@ public class EOQualifierFactory {
 					variableKey = variableKey.substring(1);
 				}
 				value = new EONamedQualifierVariable(variableKey);
-			} else if ("NSNumber".equals(valueClass)) {
+			} else if ("NSNumber".equals(valueClass) || "java.lang.Number".equals(valueClass)) {
 				value = valueMap.get("value");
 				if (value instanceof String) {
 					String valueStr = (String) value;
