@@ -54,8 +54,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.objectstyle.wolips.eomodeler.core.model.EOQualifierFactory;
+import org.objectstyle.wolips.eomodeler.core.model.qualifier.EOQualifier;
 import org.objectstyle.wolips.preferences.Preferences;
 
 /**
@@ -77,6 +81,9 @@ public class Rule extends AbstractRuleElement implements Comparable<Rule> {
 	protected static final String RHS_KEY = "rhs";
 
 	protected static final String DOCUMENTATION = "documentation";
+
+	// TODO handle documentation
+	private static final Pattern RULE_PATTERN = Pattern.compile(" *?(\\d*?) : (.*?) => (.*?) = (.*?) \\[(.*?)\\](:.*?),?");
 
 	private String author;
 	
@@ -102,6 +109,7 @@ public class Rule extends AbstractRuleElement implements Comparable<Rule> {
 		rightHandSide = new RightHandSide();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Rule(final Map properties) {
 		super(properties);
 
@@ -142,6 +150,7 @@ public class Rule extends AbstractRuleElement implements Comparable<Rule> {
 	 * @param rule
 	 *            A D2W rule
 	 */
+	@SuppressWarnings("unchecked")
 	protected Rule(Rule rule) {
 		super(Collections.<String, Object> emptyMap());
 
@@ -296,6 +305,31 @@ public class Rule extends AbstractRuleElement implements Comparable<Rule> {
 		txtContent.append(getRightHandSide().getAssignmentClassName());
 		txtContent.append("]");
 		return txtContent.toString();
-		
+	}
+	
+	public static Rule fromString(final String humanReadable) {
+		Rule rule = null;
+		String strippedRule = humanReadable;
+		if (humanReadable.endsWith(",")) {
+			strippedRule = humanReadable.substring(0, humanReadable.length() - 1);
+		}
+		Matcher m = RULE_PATTERN.matcher(humanReadable);
+		if (m.matches()) {
+			rule = new Rule();
+			rule.setAuthor(m.group(1));
+			if (!"*true*".equals(m.group(2))) {
+				EOQualifier qualifierFromString = EOQualifierFactory.fromString(m.group(2));
+				rule.getLeftHandSide().setQualifier(qualifierFromString);
+			}
+			rule.getRightHandSide().setKeyPath(m.group(3));
+			rule.getRightHandSide().setValue(m.group(4));
+			rule.getRightHandSide().setAssignmentClassName(m.group(5));
+			if (!strippedRule.equals(rule.toString())) {
+				System.out.println("Rule.fromString: May have failed to parse rule: \n" + strippedRule + "\n" + rule.toString());
+			}
+		} else {
+			System.out.println("Rule.fromString: failed to match: " + humanReadable);
+		}
+		return rule;
 	}
 }
