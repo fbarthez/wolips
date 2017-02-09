@@ -83,7 +83,7 @@ public class Rule extends AbstractRuleElement implements Comparable<Rule> {
 	protected static final String DOCUMENTATION = "documentation";
 
 	// TODO handle documentation
-	private static final Pattern RULE_PATTERN = Pattern.compile(" *?(\\d*?) : (.*?) => (.*?) = (.*?) \\[(.*?)\\](:.*?),?");
+	private static final Pattern RULE_PATTERN = Pattern.compile(" *?(\\d*?) : (.*?) => (.*?) = (.*?) \\[(.*?)\\],?");
 
 	private String author;
 	
