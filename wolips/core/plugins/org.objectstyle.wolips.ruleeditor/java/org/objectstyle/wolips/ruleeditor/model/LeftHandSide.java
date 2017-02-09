@@ -49,9 +49,12 @@
  */
 package org.objectstyle.wolips.ruleeditor.model;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+
+import org.objectstyle.wolips.eomodeler.core.model.EOModelMap;
+import org.objectstyle.wolips.eomodeler.core.model.EOQualifierFactory;
+import org.objectstyle.wolips.eomodeler.core.model.qualifier.EOQualifier;
 
 /**
  * @author uli
@@ -68,9 +71,19 @@ public class LeftHandSide extends AbstractQualifierElement {
 	 * <code>LeftHandSide</code> objects by themselves.
 	 */
 	protected LeftHandSide() {
-		super(Collections.EMPTY_MAP);
+		super(Collections.<String, Object> emptyMap());
 	}
 
+	private EOQualifier qualifier = EOQualifierFactory.fromString("");
+	
+	public EOQualifier qualifier() {
+		return qualifier;
+	}
+	
+	public void setQualifier(EOQualifier qualifier) {
+		this.qualifier = qualifier;
+	}
+	
 	/**
 	 * The constructor is protected because users shouldn't create
 	 * <code>LeftHandSide</code> objects by themselves.
@@ -81,24 +94,17 @@ public class LeftHandSide extends AbstractQualifierElement {
 	 */
 	protected LeftHandSide(final Map<String, Object> lhsProperties) {
 		super(lhsProperties);
+		EOModelMap map = new EOModelMap(lhsProperties);
+		qualifier = EOQualifierFactory.createQualifierFromQualifierMap(map);
 	}
 
 	protected boolean isEmpty() {
-		return getAssignmentClassName() == null && getKey() == null && getValue() == null && getSelectorName() == null && getQualifiers() == null && getQualifier() == null;
+		return qualifier == null;
 	}
 
 	public void setConditions(final String conditions) {
 		String oldValue = toString();
-		LeftHandSideParser parser = new LeftHandSideParser();
-
-		Map<String, Object> properties = parser.parse(conditions);
-
-		setAssignmentClassName((String) properties.get(CLASS_KEY));
-		setKey((String) properties.get(KEY_KEY));
-		setValue(properties.get(VALUE_KEY));
-		setSelectorName((String) properties.get(SELECTOR_NAME_KEY));
-		setQualifiers((Collection<QualifierElement>) properties.get(QUALIFIERS_KEY));
-
+		qualifier = EOQualifierFactory.fromString(conditions);
 		firePropertyChange("LEFT_HAND_SIDE", oldValue, toString());
 	}
 
@@ -107,13 +113,13 @@ public class LeftHandSide extends AbstractQualifierElement {
 	 * 
 	 * @see org.objectstyle.wolips.ruleeditor.model.AbstractQualifierElement#toMap()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> toMap() {
 		if (isEmpty()) {
 			return null;
 		}
-
-		return super.toMap();
+		return EOQualifierFactory.createQualifierMapFromQualifier(qualifier);
 	}
 
 	/**
@@ -134,32 +140,6 @@ public class LeftHandSide extends AbstractQualifierElement {
 		if (isEmpty()) {
 			return EMPTY_LHS_VALUE;
 		}
-
-		StringBuffer buffer = new StringBuffer();
-
-		if (getQualifiers() != null || getQualifier() != null) {
-			appendToDisplayStringBuffer(buffer);
-		} else {
-			buffer.append(getKey());
-			buffer.append(" ");
-
-			Selector selector = Selector.forName(getSelectorName());
-
-			buffer.append(selector.getOperator());
-			buffer.append(" ");
-
-			// and another ugly hack to handle EOKeyComparisonQualifier
-			// has to be done here since LhsValue knows nothing about the qualifier
-			if (EO_KEY_COMPARISON_QUALIFIER.equals(getAssignmentClassName())) {
-				String value = getValue().toString();
-				// strip quotes from the value to preserve the key path identity
-				value = value.replace("'", "");
-				buffer.append(value);
-			} else {
-				buffer.append(getValue());
-			}
-		}
-
-		return buffer.toString();
+		return qualifier.toString();
 	}
 }
