@@ -53,6 +53,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.FocusAdapter;
@@ -74,6 +75,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.objectstyle.wolips.ruleeditor.actions.CopyRuleAction;
+import org.objectstyle.wolips.ruleeditor.actions.CutRuleAction;
+import org.objectstyle.wolips.ruleeditor.actions.DeleteRuleAction;
+import org.objectstyle.wolips.ruleeditor.actions.PasteTableRuleAction;
 import org.objectstyle.wolips.ruleeditor.filter.RulesFilter;
 import org.objectstyle.wolips.ruleeditor.listener.FilterListener;
 import org.objectstyle.wolips.ruleeditor.listener.NumberVerifyListener;
@@ -130,7 +137,7 @@ public class RuleEditor {
 	 * @param shell
 	 *            the main window
 	 */
-	public void createContents(final Composite parent) {
+	public void createContents(final Composite parent, final RuleEditorPart part) {
 		Composite container = new Composite(parent, SWT.NONE);
 
 		GridLayout layout1 = new GridLayout();
@@ -162,7 +169,7 @@ public class RuleEditor {
 
 				updateRules();
 
-				table.select(table.getItemCount());
+				getTable().select(getTable().getItemCount());
 				updating = false;
 
 				updateBottomDisplay();
@@ -190,7 +197,7 @@ public class RuleEditor {
 		duplicateButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent event) {
-				Rule ruleToCopy = (Rule) tableViewer.getElementAt(table.getSelectionIndex());
+				Rule ruleToCopy = (Rule) tableViewer.getElementAt(getTable().getSelectionIndex());
 
 				model.copyRule(ruleToCopy);
 
@@ -240,14 +247,14 @@ public class RuleEditor {
 		tabledata.grabExcessVerticalSpace = true;
 
 		// table = new Table(shell, SWT.SINGLE | SWT.FULL_SELECTION);
-		table = new Table(container, SWT.MULTI | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.setLayoutData(tabledata);
+		setTable(new Table(container, SWT.MULTI | SWT.FULL_SELECTION));
+		getTable().setHeaderVisible(true);
+		getTable().setLinesVisible(true);
+		getTable().setLayoutData(tabledata);
 
 		// Create the TableViewer to hold content and do update
 
-		tableViewer = new TableViewer(table);
+		tableViewer = new TableViewer(getTable());
 		tableViewer.setContentProvider(new TableContentProvider());
 		tableViewer.setLabelProvider(new TableLabelProvider());
 		tableViewer.setInput(model);
@@ -255,17 +262,17 @@ public class RuleEditor {
 		searchtext.addModifyListener(new FilterListener(tableViewer));
 
 		// Create an editor object to use for text editing
-		final TableEditor editor = new TableEditor(table);
+		final TableEditor editor = new TableEditor(getTable());
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
 
 		// Use a mouse listener, not a selection listener, since we're
 		// interested
 		// in the selected column as well as row
-		table.addSelectionListener(new SelectionAdapter() {
+		getTable().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				rule = (Rule) tableViewer.getElementAt(table.getSelectionIndex());
+				rule = (Rule) tableViewer.getElementAt(getTable().getSelectionIndex());
 				updating = true;
 				updateBottomDisplay();
 			}
@@ -330,24 +337,43 @@ public class RuleEditor {
 		// c4.setText("Priority");
 		// c4.pack();
 
-		table.addControlListener(new ControlAdapter() {
+		getTable().addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(final ControlEvent e) {
-				if (table.getColumnCount() < 2) {
+				if (getTable().getColumnCount() < 2) {
 					return;
 				}
 
-				int tblWidth = table.getBounds().width;
+				int tblWidth = getTable().getBounds().width;
 				int t0w = (int) (tblWidth * 0.3);
 				int t1w = (int) (tblWidth * 0.15);
 				int t2w = (int) (tblWidth * 0.225);
 				int t4w = (int) (tblWidth * 0.225);
 				int t3w = tblWidth - (t0w + t1w + t2w + t4w + 40);
-				table.getColumn(0).setWidth(t3w);
-				table.getColumn(1).setWidth(t0w);
-				table.getColumn(2).setWidth(t1w);
-				table.getColumn(3).setWidth(t2w);
-				table.getColumn(4).setWidth(t4w);
+				getTable().getColumn(0).setWidth(t3w);
+				getTable().getColumn(1).setWidth(t0w);
+				getTable().getColumn(2).setWidth(t1w);
+				getTable().getColumn(3).setWidth(t2w);
+				getTable().getColumn(4).setWidth(t4w);
+			}
+		});
+		getTable().addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(final FocusEvent event) {
+					IActionBars bars = part.getEditorSite().getActionBars();
+					bars.clearGlobalActionHandlers();
+			}
+		});
+		getTable().addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(final FocusEvent event) {
+				Clipboard clipboard = new Clipboard(part.getSite().getShell().getDisplay());
+				IActionBars bars = part.getEditorSite().getActionBars();
+				bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, new CutRuleAction(tableViewer(), clipboard));
+				bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, new CopyRuleAction(tableViewer(), clipboard));
+				bars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, new PasteTableRuleAction(tableViewer(), clipboard));
+				bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, new DeleteRuleAction(tableViewer()));
+
 			}
 		});
 
@@ -487,7 +513,7 @@ public class RuleEditor {
 	}
 
 	public Rule selectedRule() {
-		return (Rule) tableViewer.getElementAt(table.getSelectionIndex());
+		return (Rule) tableViewer.getElementAt(getTable().getSelectionIndex());
 	}
 
 	void setClassName(final String classname) {
@@ -564,12 +590,20 @@ public class RuleEditor {
 	}
 
 	public void updateRules() {
-		if (table == null) {
+		if (getTable() == null) {
 			return;
 		}
 
 		tableViewer.setInput(model);
 		tableViewer.refresh();
+	}
+
+	public Table getTable() {
+		return table;
+	}
+
+	public void setTable(Table table) {
+		this.table = table;
 	}
 
 }
