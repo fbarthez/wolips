@@ -76,7 +76,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
 import org.objectstyle.wolips.ruleeditor.actions.CopyRuleAction;
 import org.objectstyle.wolips.ruleeditor.actions.CutRuleAction;
 import org.objectstyle.wolips.ruleeditor.actions.DeleteRuleAction;
@@ -369,10 +369,10 @@ public class RuleEditor {
 			public void focusGained(final FocusEvent event) {
 				Clipboard clipboard = new Clipboard(part.getSite().getShell().getDisplay());
 				IActionBars bars = part.getEditorSite().getActionBars();
-				bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, new CutRuleAction(tableViewer(), clipboard));
-				bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, new CopyRuleAction(tableViewer(), clipboard));
-				bars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, new PasteTableRuleAction(tableViewer(), clipboard));
-				bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, new DeleteRuleAction(tableViewer()));
+				bars.setGlobalActionHandler(ActionFactory.CUT.getId(), new CutRuleAction(tableViewer(), clipboard));
+				bars.setGlobalActionHandler(ActionFactory.COPY.getId(), new CopyRuleAction(tableViewer(), clipboard));
+				bars.setGlobalActionHandler(ActionFactory.PASTE.getId(), new PasteTableRuleAction(tableViewer(), clipboard));
+				bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), new DeleteRuleAction(tableViewer()));
 
 			}
 		});
