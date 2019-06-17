@@ -248,7 +248,7 @@ public class WOApplication extends WOTask {
         dir = taskDir();
         startupScript = new File(dir, startupScriptName);
         String content = new String(Files.readAllBytes(startupScript.toPath()), Charset.forName("UTF-8"));
-        content = content.replaceAll("\\r\\n?", "\n");
+        content = content.replaceAll("\\r\\n", "\n");
         writer = new BufferedWriter(new FileWriter(startupScript));
         writer.write(content);
         writer.close();
