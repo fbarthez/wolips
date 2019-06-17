@@ -241,7 +241,6 @@ public class WOApplication extends WOTask {
    */
   protected void forceLineEndings() throws BuildException {
     if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
-      super.log("Building on windows: Will force unix line endings.");
       File dir = null;
       File startupScript = null;
       BufferedWriter writer = null;
@@ -249,11 +248,11 @@ public class WOApplication extends WOTask {
         dir = taskDir();
         startupScript = new File(dir, startupScriptName);
         String content = new String(Files.readAllBytes(startupScript.toPath()), Charset.forName("UTF-8"));
-        content.replaceAll("\\r\\n?", "\n");
+        content = content.replaceAll("\\r\\n?", "\n");
         writer = new BufferedWriter(new FileWriter(startupScript));
         writer.write(content);
         writer.close();
-        super.log("Building on windows: Forced unix line endings.");
+        super.log("Building on windows: Forced unix line endings for UNIX startup script.");
       } catch (IOException e) {
         e.printStackTrace();
       }
