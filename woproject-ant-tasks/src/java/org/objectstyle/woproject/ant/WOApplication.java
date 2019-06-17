@@ -247,7 +247,6 @@ public class WOApplication extends WOTask {
       BufferedWriter writer = null;
       try {
         dir = taskDir();
-        super.log("chmod scripts in " + dir, Project.MSG_VERBOSE);
         startupScript = new File(dir, startupScriptName);
         String content = new String(Files.readAllBytes(startupScript.toPath()), Charset.forName("UTF-8"));
         content.replaceAll("\\r\\n?", "\n");
