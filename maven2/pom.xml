@@ -18,7 +18,6 @@
 		<module>archetypes</module>
 		<module>maven-wobootstrap-plugin</module>
 		<module>maven-japplication-plugin</module>
-		<module>maven-wolifecycle-plugin</module>
 	</modules>
 
 	<dependencyManagement>
