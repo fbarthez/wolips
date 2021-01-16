@@ -79,7 +79,7 @@ public class JApplicationMojo extends AbstractMojo {
 	/**
 	 * The name of the application without OS-specific extension
 	 * 
-	 * @parameter expression="${name}"
+	 * @parameter name="name"
 	 *            default-value="${project.artifact.artifactId}
 	 */
 	protected String name;
@@ -87,7 +87,7 @@ public class JApplicationMojo extends AbstractMojo {
 	/**
 	 * Main Java class
 	 * 
-	 * @parameter expression="${mainClass}"
+	 * @parameter mainClass="mainClass"
 	 * @required
 	 */
 	protected String mainClass;
@@ -96,7 +96,7 @@ public class JApplicationMojo extends AbstractMojo {
 	 * A family of operating systems. Currently supported values are "mac",
 	 * "windows" and "java".
 	 * 
-	 * @parameter expression="${os}"
+	 * @parameter os="os"
 	 */
 	protected String os;
 
@@ -104,7 +104,7 @@ public class JApplicationMojo extends AbstractMojo {
 	 * An optional string identifying the application human-readable name. If
 	 * not specified, "name" is used.
 	 * 
-	 * @parameter expression="${longName}"
+	 * @parameter longName="longName"
 	 *            default-value="${project.artifact.artifactId}-${project.artifact.version}"
 	 */
 	protected String longName;
@@ -113,7 +113,7 @@ public class JApplicationMojo extends AbstractMojo {
 	 * A destination directory where the application launcher should be
 	 * installed.
 	 * 
-	 * @parameter expression="${destDir}"
+	 * @parameter destDir="destDir"
 	 *            default-value="${project.build.directory}
 	 */
 	protected File destDir;
@@ -122,35 +122,35 @@ public class JApplicationMojo extends AbstractMojo {
 	 * Platform-specific icon file (usually "*.ico" on Windows and "*.icns" on
 	 * Mac)
 	 * 
-	 * @parameter expression="${icon}"
+	 * @parameter icon="icon"
 	 */
 	protected File icon;
 
 	/**
 	 * Minimal version of the Java Virtual machine required.
 	 * 
-	 * @parameter expression="${jvm}"
+	 * @parameter jvm="jvm"
 	 */
 	protected String jvm;
 
 	/**
 	 * Optional parameters to pass to the JVM, such as memory settings, etc.
 	 * 
-	 * @parameter expression="${jvmOptions}"
+	 * @parameter jvmOptions="jvmOptions"
 	 */
 	protected String jvmOptions;
 
 	/**
 	 * Contains the full list of projects in the reactor.
 	 * 
-	 * @parameter expression="${project}"
+	 * @parameter project="project"
 	 * @required
 	 * @readonly
 	 */
 	protected MavenProject project;
 
 	/**
-	 * @parameter expression="${version}"
+	 * @parameter version="version"
 	 *            default-value="${project.artifact.version}
 	 */
 	protected String version;

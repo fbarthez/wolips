@@ -88,7 +88,7 @@ public abstract class AbstractBootstrapMojo extends AbstractMojo {
 	/**
 	 * The Maven local repository.
 	 * 
-	 * @parameter expression="${localRepository}"
+	 * @parameter localRepository="localRepository"
 	 */
 	protected ArtifactRepository localRepository;
 
@@ -112,7 +112,7 @@ public abstract class AbstractBootstrapMojo extends AbstractMojo {
 	 * The path to the WebObjects lib folder. Retrieved automatically in
 	 * accordance with the type of operational system.
 	 * 
-	 * @parameter expression="${webObjectsLibFolder}"
+	 * @parameter webObjectsLibFolder="webObjectsLibFolder"
 	 */
 	protected String webObjectsLibFolder;
 
@@ -120,7 +120,7 @@ public abstract class AbstractBootstrapMojo extends AbstractMojo {
 	 * The WebObjects version. Retrieved automatically from the version.plist
 	 * file if not provided.
 	 * 
-	 * @parameter expression="${webObjectsVersion}"
+	 * @parameter webObjectsVersion="webObjectsVersion"
 	 */
 	protected String webObjectsVersion;
 

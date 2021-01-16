@@ -80,7 +80,7 @@ public class BootstrapDeployMojo extends AbstractBootstrapMojo {
 	 * <p>
 	 * Description copied from maven-deploy-plugin
 	 * 
-	 * @parameter expression="${repositoryId}" default-value="remote-repository"
+	 * @parameter  default-value="remote-repository"
 	 * @required
 	 */
 	private String repositoryId;
@@ -98,7 +98,7 @@ public class BootstrapDeployMojo extends AbstractBootstrapMojo {
 	 * <p>
 	 * Description copied from maven-deploy-plugin
 	 * 
-	 * @parameter expression="${url}"
+	 * @parameter 
 	 * @required
 	 */
 	private String url;

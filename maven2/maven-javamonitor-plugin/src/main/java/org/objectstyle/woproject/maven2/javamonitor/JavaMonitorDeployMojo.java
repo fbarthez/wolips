@@ -217,21 +217,21 @@ public class JavaMonitorDeployMojo extends AbstractMojo implements
 	/**
 	 * The maven project.
 	 *
-	 * @parameter expression="${project}"
+	 * @parameter project="project"
 	 * @required
 	 * @readonly
 	 */
 	private MavenProject project;
 
 	/**
-	 * @parameter expression="${server}"
+	 * @parameter server="server"
 	 */
 	private String server;
 
 	/**
 	 * The current user system settings for use in Maven.
 	 *
-	 * @parameter expression="${settings}"
+	 * @parameter settings="settings"
 	 * @required
 	 * @readonly
 	 */
@@ -243,7 +243,7 @@ public class JavaMonitorDeployMojo extends AbstractMojo implements
 	 * If you don't specify this, the default-value will be
 	 * "file:///Library/WebObjects/Applications/${project.build.finalName}.woa".
 	 *
-	 * @parameter expression="${url}" default-value=
+	 * @parameter url="url" default-value=
 	 *            "file:///Library/WebObjects/Applications/${project.build.finalName}.woa"
 	 * @required
 	 */
@@ -255,12 +255,12 @@ public class JavaMonitorDeployMojo extends AbstractMojo implements
 	private WagonManager wagonManager;
 
 	/**
-	 * @parameter expression="${woaDirectory}"
+	 * @parameter woaDirectory="woaDirectory"
 	 */
 	private String woaDirectory;
 
 	/**
-	 * @parameter expression="${project.build.finalName}"
+	 * @parameter project.build.finalName="project.build.finalName"
 	 * @readonly
 	 * @required
 	 */
