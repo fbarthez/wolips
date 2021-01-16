@@ -69,7 +69,7 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<file>${build.directory}/catalog/archetype-catalog.xml</file>
+									<file>${project.build.directory}/catalog/archetype-catalog.xml</file>
 									<type>xml</type>
 									<classifier>catalog</classifier>
 								</artifact>
